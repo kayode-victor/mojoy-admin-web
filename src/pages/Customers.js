@@ -1,0 +1,56 @@
+import React, { useEffect } from "react";
+import { Table } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsers } from "../features/customers/customerSlice";
+
+const columns = [
+  {
+    title: "Serial No.",
+    dataIndex: "key",
+    defaultSortOrder: "descend",
+    sorter: (a, b) => a.key - b.key,
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    sorter: (a, b) => a.name.length - b.name.length,
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    sorter: (a, b) => a.email.length - b.email.length,
+  },
+  {
+    title: "Mobile",
+    dataIndex: "mobile",
+  },
+];
+
+const Customers = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUsers());
+  }, [dispatch]);
+  const customerstate = useSelector((state) => state.customer.customers);
+  const data1 = [];
+  for (let i = 0; i < customerstate.length; i++) {
+    if (customerstate[i].role !== "admin") {
+      data1.push({
+        key: i + 1,
+        name: customerstate[i].firstname + " " + customerstate[i].lastname,
+        email: customerstate[i].email,
+        mobile: customerstate[i].mobile,
+      });
+    }
+  }
+  return (
+    <div>
+      <h3 className="mb-4 title">Customers</h3>
+      <div>
+        <Table columns={columns} dataSource={data1} />
+      </div>
+    </div>
+  );
+};
+
+export default Customers;
